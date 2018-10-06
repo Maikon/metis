@@ -1,0 +1,26 @@
+service: metis
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  versionFunctions: false
+
+  stage: prod
+  region: eu-west-1
+
+package:
+ exclude:
+   - notes.org
+   - server.js
+
+functions:
+  metis:
+    handler: metis.handler
+    environment:
+      token: ${env:SLACK_TOKEN}
+      channel: ${env:SLACK_CHANNEL}
+    events:
+      - schedule:
+          name: 'send_daily_quote'
+          enabled: true
+          rate: cron(0 8 ? * MON-FRI *)
